@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 
 //interface para criar o esquema do usuário e importar
-interface IUser extends Document {
+export interface IUser extends Document {
   name: string;
   email: string;
   password: string;

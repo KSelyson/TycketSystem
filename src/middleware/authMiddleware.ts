@@ -19,6 +19,7 @@ const AuthMiddle = (req: Request, res: Response, next: NextFunction) => {
 
         next(); //Passa normalmente
     } catch(e){
+        // 
         return res.status(401).json({error:"Token inválido."});
     }
 

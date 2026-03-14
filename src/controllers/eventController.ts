@@ -1,7 +1,8 @@
 import { Event } from '../models/Event';
+import { Request, Response } from 'express';
 
 //GetAll || Buscar todos os eventos (deixar a rota publica)
-const getAllEvents = async (req: any, res: any) => {
+export const getAllEvents = async (req: Request, res: Response) => {
     try {
         const events = await Event.find();//pega todo mundo e coloca no array events
         res.status(200).json(events);
@@ -12,7 +13,7 @@ const getAllEvents = async (req: any, res: any) => {
 };
 
 //GetByID || Buscar por ID especifico (Deixar a rota publica)
-const getByIdEvent = async (req: any, res: any) => {
+export const getByIdEvent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const event = await Event.findById(id);
@@ -27,14 +28,25 @@ const getByIdEvent = async (req: any, res: any) => {
 };
 
 // Create/Post || Criar um novo evento (Deixar a rota privada)
-const createEvent = async (req: any, res: any) => {
+export const createEvent = async (req: Request, res: Response) => {
     try {
-        const { title, description, date, location, max_participants, category_id, createdBy_id } = req.body; //captura os dados do corpo da requisição
-        const newEvent = new Event({ title, description, date, location, max_participants, category_id, createdBy_id }); //novo objeto
+        const { title, description, date, location, max_participants, category_id } = req.body; //captura os dados do corpo da requisição
+        const createdBy_id = req.user?._id; //captura o ID do usuário autenticado
+        const newEvent = new Event({ 
+            title, 
+            description, 
+            date, 
+            location, 
+            max_participants, 
+            category_id, 
+            createdBy_id }); //novo objeto
+
         await newEvent.save(); //salva o evento no DB
+
         if (!newEvent) {
             return res.status(400).json({ error: 'Erro ao criar evento' });
         }
+        
         res.status(201).json(newEvent); //retorna o evento criado com status 201 (Created)
     } catch (e: any) {
         //captura de erro
@@ -43,7 +55,7 @@ const createEvent = async (req: any, res: any) => {
 };
 
 // Update/Put || Atualizar um evento existente (Deixar a rota privada)
-const updateEvent = async (req: any, res: any) => {
+export const updateEvent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params; // pega o id
         const { name, date, location } = req.body; // pega as alterações da requisição
@@ -61,7 +73,7 @@ const updateEvent = async (req: any, res: any) => {
 };
 
 // Delete || Deletar um evento (Deixar a rota privada)
-const deleteEvent = async (req: any, res: any) => {
+export const deleteEvent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params; // pega o id
         const deletedEvent = await Event.findByIdAndDelete(id); // encontra o evento e deleta
@@ -74,12 +86,4 @@ const deleteEvent = async (req: any, res: any) => {
         //captura de erro
         res.status(500).json({ error: 'Erro ao deletar evento', details: e.message });
     }
-};
-
-module.exports = {
-    getAllEvents,
-    getByIdEvent,
-    createEvent,
-    updateEvent,
-    deleteEvent
 };

@@ -47,7 +47,7 @@ export const AuthMiddle = async(req: Request, res: Response, next: NextFunction)
 
 // Middleware para verificar se o usuário é administrador
 export const AdminAuth = (req: Request, res: Response, next: NextFunction) => { 
-    if (req.user && req.user.role === 'admin') {
+    if (req.user?.role === 'admin') {
         next();
     } else {
         return res.status(403).json({ error: 'Acesso restrito a administradores.' });

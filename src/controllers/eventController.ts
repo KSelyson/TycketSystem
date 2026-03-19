@@ -1,10 +1,11 @@
 import { Event } from '../models/Event';
+import { Category } from '../models/Category';
 import { Request, Response } from 'express';
 
 //GetAll || Buscar todos os eventos (deixar a rota publica)
 export const getAllEvents = async (req: Request, res: Response) => {
     try {
-        const events = await Event.find();//pega todo mundo e coloca no array events
+        const events = await Event.find().populate('category').populate('createdBy'); //pega todo mundo e coloca no array events
         res.status(200).json(events);
     } catch (e: any) {
         //captura de erro
@@ -16,7 +17,7 @@ export const getAllEvents = async (req: Request, res: Response) => {
 export const getByIdEvent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const event = await Event.findById(id);
+        const event = await Event.findById(id).populate('category').populate('createdBy');
 
         if (!event) {
             return res.status(404).json({ error: 'Evento não encontrado' });
@@ -31,15 +32,16 @@ export const getByIdEvent = async (req: Request, res: Response) => {
 export const createEvent = async (req: Request, res: Response) => {
     try {
         const { title, description, date, location, max_participants, category_id } = req.body; //captura os dados do corpo da requisição
-        const createdBy_id = req.user?._id; //captura o ID do usuário autenticado
+        const createdBy = req.user; //captura o usuário autenticado
+        const category = await Category.findById(category_id); //captura a categoria do evento
         const newEvent = new Event({ 
             title, 
             description, 
             date, 
             location, 
             max_participants, 
-            category_id, 
-            createdBy_id }); //novo objeto
+            category, 
+            createdBy }); //novo objeto
 
         await newEvent.save(); //salva o evento no DB
 

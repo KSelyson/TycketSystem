@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Category } from '../models/Category';
 
+// Create/Post || Criar uma nova categoria (Deixar a rota privada)
 export const createCategory = async (req: Request, res: Response) => {
     try {
         const { name, description } = req.body;
@@ -12,6 +13,7 @@ export const createCategory = async (req: Request, res: Response) => {
     }
 };
 
+// GetAll || Buscar todas as categorias (Deixar a rota publica)
 export const getAllCategories = async (req: Request, res: Response) => {
     try {
         const categories = await Category.find();
@@ -21,6 +23,7 @@ export const getAllCategories = async (req: Request, res: Response) => {
     }
 };
 
+// GetByID || Buscar por ID especifico (Deixar a rota publica)
 export const deleteCategory = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;

@@ -4,6 +4,8 @@ import cors from 'cors';
 import connectDB from './config/db';
 import userRouter from './routes/userRoute';
 import eventRouter from './routes/eventRoute';
+import categoryRouter from './routes/categoryRoute';
+import inscriptionRouter from './routes/inscriptionRoute';
 
 // carrega o .env
 dotenv.config();
@@ -22,6 +24,8 @@ app.use(cors());
 // rotas
 app.use('/api', userRouter);
 app.use('/api', eventRouter);
+app.use('/api', categoryRouter);
+app.use('/api', inscriptionRouter); 
 
 // inicia o servidor
 app.listen(PORT, () => {

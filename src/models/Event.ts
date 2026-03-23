@@ -20,7 +20,7 @@ const EventSchema: Schema = new Schema({
     location: {type: String, required: true},
     max_participants: {type: Number, required: true},
     createdAt: {type: Date, default: Date.now},
-    category: {type: mongoose.Types.ObjectId, required: true},
+    category: {type: mongoose.Types.ObjectId, ref: "Category", required: true},
     createdBy: {type: mongoose.Types.ObjectId, required: true}
 });
 

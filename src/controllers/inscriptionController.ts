@@ -4,7 +4,7 @@ import { Event } from '../models/Event';
 import { User } from '../models/User';
 
 // Post || Inscrever um usuário em um evento (Deixar a rota privada)
-export const subscribeToEvent = async (req: any, res: Response) => {    
+export const subscribeToEvent = async (req: Request, res: Response) => {    
     try {
         const { event_id } = req.body;
 
@@ -42,7 +42,9 @@ export const subscribeToEvent = async (req: any, res: Response) => {
 export const getMyInscriptions = async (req: Request, res: Response) => {
     try {
         // Busca inscrições do usuário e traz os detalhes do evento junto (populate)
-        const inscriptions = await Inscription.find({ _id: req.user?._id }).populate('event_id');
+        const inscriptions = await Inscription.find({ user: req.user?._id }).populate('event');
+        
+        console.log('Inscrições encontradas:', inscriptions.length);
         res.status(200).json(inscriptions);
     } catch (e: any) {
         res.status(500).json({ error: 'Erro ao buscar suas inscrições', details: e.message });

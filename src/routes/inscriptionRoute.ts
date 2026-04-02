@@ -1,6 +1,5 @@
 import { Router } from 'express';
-// @ts-ignore: temporary - create ../controllers/inscriptionController.ts to provide these exports
-import { subscribeToEvent, getMyInscriptions } from '../controllers/inscriptionController.ts';
+import { subscribeToEvent, getMyInscriptions } from '../controllers/inscriptionController';
 import { AuthMiddle } from '../middleware/authMiddleware';
 
 const inscriptionRouter = Router();

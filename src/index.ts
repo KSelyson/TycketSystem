@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db';
-import userRouter from './routes/userRoute';
+import userRouter from './routes/UserRoute';
 import eventRouter from './routes/eventRoute';
 import categoryRouter from './routes/categoryRoute';
 import inscriptionRouter from './routes/inscriptionRoute';

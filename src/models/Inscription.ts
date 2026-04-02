@@ -1,9 +1,9 @@
 import mongoose, {Schema, model, Document} from "mongoose";
 
 //interface para criar o esquema do usuário e importar
-export interface IEvent extends Document {
-    user: {type: mongoose.Types.ObjectId, ref: "User"};
-    event: {type: mongoose.Types.ObjectId, ref: "Event"}    ;
+export interface IInscription extends Document {
+    user: mongoose.Types.ObjectId;
+    event: mongoose.Types.ObjectId;
     createdAt: Date;
     status: string;
 }
@@ -16,4 +16,4 @@ const InscriptionSchema: Schema = new Schema({
     status: {type: String, default: 'confirmed'}
 });
 
-export const Inscription = model<IEvent>('Inscription', InscriptionSchema);
+export const Inscription = model<IInscription>('Inscription', InscriptionSchema);

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { useEffect, useState } from 'react';
+import api from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 import { Calendar, MapPin, Users } from 'lucide-react';
+import axios from 'axios';
 
 interface Event {
   _id: string;
@@ -18,17 +19,17 @@ const Home = () => {
   const { user } = useAuth();
 
   useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await api.get('/events');
+        setEvents(response.data);
+      } catch (err) {
+        console.error('Erro ao buscar eventos', err);
+      }
+    };
+
     fetchEvents();
   }, []);
-
-  const fetchEvents = async () => {
-    try {
-      const response = await api.get('/events');
-      setEvents(response.data);
-    } catch (err) {
-      console.error('Erro ao buscar eventos', err);
-    }
-  };
 
   const handleSubscribe = async (eventId: string) => {
     if (!user) {
@@ -39,8 +40,12 @@ const Home = () => {
     try {
       await api.post('/inscriptions', { event_id: eventId });
       alert('Inscrição realizada com sucesso!');
-    } catch (err: any) {
-      alert(err.response?.data?.error || 'Erro ao se inscrever');
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.error || 'Erro ao se inscrever');
+      } else {
+        alert('Erro inesperado');
+      }
     }
   };
 

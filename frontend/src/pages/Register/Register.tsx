@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../services/api';
+import api from '../../services/api';
+import axios from 'axios';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -15,8 +16,12 @@ const Register = () => {
       await api.post('/users/register', { name, email, password });
       alert('Cadastro realizado com sucesso! Faça login.');
       navigate('/login');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Erro ao realizar cadastro');
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Erro ao realizar cadastro');
+      } else {
+        setError('Erro inesperado');
+      }
     }
   };
 

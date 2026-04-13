@@ -1,21 +1,7 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import api from '../services/api';
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
-interface AuthContextData {
-  user: User | null;
-  loading: boolean;
-  login: (token: string, userData: User) => void;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+import React, { useState, useEffect } from 'react';
+import { AuthContext } from './AuthContext';
+import type { User } from './AuthContext';
+// import api from '../services/api'; // não está usando a API por enquanto
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -26,6 +12,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storagedUser = localStorage.getItem('user');
 
     if (storagedToken && storagedUser) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUser(JSON.parse(storagedUser));
     }
     setLoading(false);
@@ -49,5 +36,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

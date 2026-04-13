@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import api from '../services/api';
+import { useEffect, useState } from 'react';
+import api from '../../services/api';
 import { Calendar, MapPin, CheckCircle } from 'lucide-react';
 
 interface Inscription {
@@ -18,17 +18,18 @@ const MyInscriptions = () => {
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
 
   useEffect(() => {
-    fetchMyInscriptions();
-  }, []);
-
   const fetchMyInscriptions = async () => {
-    try {
-      const response = await api.get('/inscriptions');
-      setInscriptions(response.data);
-    } catch (err) {
-      console.error('Erro ao buscar inscrições', err);
-    }
-  };
+      try {
+        const response = await api.get('/inscriptions');
+        setInscriptions(response.data);
+      } catch (err) {
+        console.error('Erro ao buscar inscrições', err);
+      }
+    };
+
+    fetchMyInscriptions();
+  }, 
+  []);
 
   return (
     <div>

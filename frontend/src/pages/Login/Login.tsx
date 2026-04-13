@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import api from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -17,8 +18,12 @@ const Login = () => {
       const { token, user } = response.data;
       login(token, user);
       navigate('/');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Erro ao fazer login');
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Erro ao fazer login');
+      } else {
+        setError('Erro inesperado');
+      }
     }
   };
 

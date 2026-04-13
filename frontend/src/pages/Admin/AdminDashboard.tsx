@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
-import { PlusCircle, Trash2, LayoutGrid, Calendar } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import api from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
+import { PlusCircle, LayoutGrid } from 'lucide-react';
+import axios from 'axios';
+// tinha variveis chamadas Trash2 e Calendar, não entendi o proposito nesse import no lucide-react
 
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [categories, setCategories] = useState([]);
-  const [events, setEvents] = useState([]);
-  
+  // const [events, setEvents] = useState([]); // Não é necessário manter os eventos no estado, pois eles não são exibidos ou editados diretamente aqui, pelo o menos por enquanto que eu estou refatorando
+
   // Estados para formulário de Evento
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -20,22 +22,35 @@ const AdminDashboard = () => {
   const [catName, setCatName] = useState('');
   const [catDesc, setCatDesc] = useState('');
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const reloadData =  async () => {
     try {
-      const [catsRes, eventsRes] = await Promise.all([
+      const [catsRes] = await Promise.all([
         api.get('/categories'),
         api.get('/events')
       ]);
       setCategories(catsRes.data);
-      setEvents(eventsRes.data);
+      // setEvents(eventsRes.data); // Não é necessário manter os eventos no estado, pois eles não são exibidos ou editados diretamente aqui NO MOMENTO
     } catch (err) {
       console.error('Erro ao buscar dados', err);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+      const [catsRes] = await Promise.all([
+        api.get('/categories'),
+        api.get('/events')
+      ]);
+      setCategories(catsRes.data);
+      // setEvents(eventsRes.data); // Não é necessário manter os eventos no estado, pois eles não são exibidos ou editados diretamente aqui NO MOMENTO
+    } catch (err) {
+      console.error('Erro ao buscar dados', err);
+    }
+  };
+
+    fetchData();
+  }, []);
 
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,9 +64,13 @@ const AdminDashboard = () => {
         category_id: categoryId
       });
       alert('Evento criado com sucesso!');
-      fetchData();
-    } catch (err: any) {
-      alert(err.response?.data?.error || 'Erro ao criar evento');
+      reloadData();
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.error || 'Erro ao criar evento');
+      } else {
+        alert('Erro inesperado');
+      }
     }
   };
 
@@ -60,9 +79,13 @@ const AdminDashboard = () => {
     try {
       await api.post('/categories', { name: catName, description: catDesc });
       alert('Categoria criada!');
-      fetchData();
-    } catch (err) {
-      alert('Erro ao criar categoria');
+      reloadData();
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.error || 'Erro ao criar categoria');
+      } else {
+        alert('Erro inesperado');
+      }
     }
   };
 
@@ -128,7 +151,7 @@ const AdminDashboard = () => {
                 required
               >
                 <option value="">Selecione uma categoria</option>
-                {categories.map((c: any) => (
+                {categories.map((c: { _id: string; name: string }) => (
                   <option key={c._id} value={c._id}>{c.name}</option>
                 ))}
               </select>

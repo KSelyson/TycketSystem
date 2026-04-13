@@ -10,7 +10,7 @@
   "type": "commonjs",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node ./src/index.ts"
+    "dev": "ts-node ./src/index.ts"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

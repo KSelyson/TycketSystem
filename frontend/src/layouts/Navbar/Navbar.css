@@ -1,0 +1,15 @@
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.nav-admin-link {
+  color: var(--danger) !important;
+  font-weight: bold;
+}
+
+.nav-user-greeting {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}

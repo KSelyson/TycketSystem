@@ -1,0 +1,45 @@
+.no-inscriptions {
+  color: var(--text-muted);
+}
+
+.inscription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.inscription-title {
+  margin: 0 0 1rem 0;
+}
+
+.inscription-status {
+  font-size: 0.7rem;
+  background: var(--success);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.inscription-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.inscription-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inscription-footer {
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+  font-size: 0.75rem;
+}

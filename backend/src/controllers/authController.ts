@@ -105,8 +105,8 @@ export const deleteUser = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'ID inválido' });
         }
 
-        if (req.user?._id.toString() !== id) { //verifica se o usuário autenticado é o mesmo que está tentando deletar
-            return res.status(403).json({ error: 'Acesso negado. Você só pode deletar seu próprio usuário.' });
+        if (req.user?.role !== 'admin' && req.user?._id.toString() !== id) { //verifica se o usuário autenticado é admin ou o próprio usuário
+            return res.status(403).json({ error: 'Acesso negado. Você só pode deletar seu próprio usuário ou deve ser um administrador.' });
         }
 
         const deletedUser = await User.findByIdAndDelete(id); //encontra o usuário e deleta

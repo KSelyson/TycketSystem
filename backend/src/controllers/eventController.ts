@@ -60,8 +60,14 @@ export const createEvent = async (req: Request, res: Response) => {
 export const updateEvent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params; // pega o id
-        const { name, date, location } = req.body; // pega as alterações da requisição
-        const updatedEvent = await Event.findByIdAndUpdate(id, { name, date, location }, { new: true }); //encontra o evento e atualiza
+        const { title, description, date, location, max_participants, category_id } = req.body; // pega as alterações da requisição
+        
+        const updateData: any = { title, description, date, location, max_participants };
+        if (category_id) {
+            updateData.category = category_id;
+        }
+
+        const updatedEvent = await Event.findByIdAndUpdate(id, updateData, { new: true }); //encontra o evento e atualiza
     
         if (!updatedEvent) {
             // se não tiver evento na const, quer dizer que não foi encontrado, então retorna erro 404

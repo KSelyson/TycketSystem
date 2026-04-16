@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import axios from 'axios';
+import './Auth.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -28,8 +29,8 @@ const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '4rem auto' }} className="card">
-      <h2 className="title" style={{ textAlign: 'center' }}>Login</h2>
+    <div className="card auth-card">
+      <h2 className="title auth-title">Login</h2>
       {error && <p style={{ color: 'var(--danger)', marginBottom: '1rem' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -50,11 +51,11 @@ const Login = () => {
             required 
           />
         </div>
-        <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
+        <button type="submit" className="btn btn-primary auth-btn">
           Entrar
         </button>
       </form>
-      <p style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem' }}>
+      <p className="auth-footer">
         Não tem uma conta? <Link to="/register" style={{ color: 'var(--primary)' }}>Cadastre-se</Link>
       </p>
     </div>

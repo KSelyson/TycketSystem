@@ -5,7 +5,7 @@ import eventRouter from './eventRoute';
 
 const userRouter = Router();
 
-eventRouter.route('/users')
+userRouter.route('/users')
     .get(AuthMiddle, AdminAuth, getAllUsers) // Rota privada para obter todos os usuários
 
 userRouter.route('/users/register')

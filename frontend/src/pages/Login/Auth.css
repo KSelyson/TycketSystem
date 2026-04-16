@@ -1,0 +1,19 @@
+.auth-card {
+  max-width: 400px;
+  margin: 4rem auto;
+}
+
+.auth-title {
+  text-align: center;
+}
+
+.auth-btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}

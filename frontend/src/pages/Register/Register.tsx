@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
 import axios from 'axios';
+import '../Login/Auth.css';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -26,8 +27,8 @@ const Register = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '4rem auto' }} className="card">
-      <h2 className="title" style={{ textAlign: 'center' }}>Cadastrar</h2>
+    <div className="card auth-card">
+      <h2 className="title auth-title">Cadastrar</h2>
       {error && <p style={{ color: 'var(--danger)', marginBottom: '1rem' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -57,11 +58,11 @@ const Register = () => {
             required 
           />
         </div>
-        <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
+        <button type="submit" className="btn btn-primary auth-btn">
           Criar Conta
         </button>
       </form>
-      <p style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem' }}>
+      <p className="auth-footer">
         Já tem uma conta? <Link to="/login" style={{ color: 'var(--primary)' }}>Entre agora</Link>
       </p>
     </div>

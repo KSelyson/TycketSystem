@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
 import type { User } from './AuthContext';
-// import api from '../services/api'; // não está usando a API por enquanto
+import api from '../services/api';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storagedToken = localStorage.getItem('token');
-    const storagedUser = localStorage.getItem('user');
+    const validateToken = async () => {
+      const storagedToken = localStorage.getItem('token');
+      const storagedUser = localStorage.getItem('user');
 
-    if (storagedToken && storagedUser) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(JSON.parse(storagedUser));
-    }
-    setLoading(false);
+      if (storagedToken && storagedUser) {
+        try {
+          const response = await api.get('/users/me');
+          setUser(response.data);
+        } catch (error) {
+          console.error('Token inválido ou expirado', error);
+          logout();
+        }
+      }
+      setLoading(false);
+    };
+
+    validateToken();
   }, []);
 
   const login = (token: string, userData: User) => {

@@ -1,53 +1,11 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
+import { useEvents } from '../../hooks/useEvents';
 import { Calendar, MapPin, Users } from 'lucide-react';
-import axios from 'axios';
-
-interface Event {
-  _id: string;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  max_participants: number;
-  category: { name: string };
-}
+import './Home.css';
 
 const Home = () => {
-  const [events, setEvents] = useState<Event[]>([]);
   const { user } = useAuth();
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await api.get('/events');
-        setEvents(response.data);
-      } catch (err) {
-        console.error('Erro ao buscar eventos', err);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
-  const handleSubscribe = async (eventId: string) => {
-    if (!user) {
-      alert('Faça login para se inscrever!');
-      return;
-    }
-
-    try {
-      await api.post('/inscriptions', { event_id: eventId });
-      alert('Inscrição realizada com sucesso!');
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.error || 'Erro ao se inscrever');
-      } else {
-        alert('Erro inesperado');
-      }
-    }
-  };
+  const { events, subscribeToEvent } = useEvents();
 
   return (
     <div>
@@ -55,40 +13,32 @@ const Home = () => {
       <div className="grid">
         {events.map((event) => (
           <div key={event._id} className="card">
-            <span style={{ 
-              fontSize: '0.75rem', 
-              background: 'var(--bg)', 
-              padding: '0.2rem 0.5rem', 
-              borderRadius: '1rem',
-              color: 'var(--primary)',
-              fontWeight: 600
-            }}>
+            <span className="event-tag">
               {event.category?.name || 'Sem Categoria'}
             </span>
-            <h3 style={{ margin: '0.5rem 0' }}>{event.title}</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+            <h3 className="event-title">{event.title}</h3>
+            <p className="event-description">
               {event.description}
             </p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="event-info-list">
+              <div className="event-info-item">
                 <Calendar size={16} />
                 {new Date(event.date).toLocaleDateString()}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div className="event-info-item">
                 <MapPin size={16} />
                 {event.location}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div className="event-info-item">
                 <Users size={16} />
                 Capacidade: {event.max_participants}
               </div>
             </div>
 
             <button 
-              className="btn btn-primary" 
-              style={{ width: '100%', marginTop: '1.5rem' }}
-              onClick={() => handleSubscribe(event._id)}
+              className="btn btn-primary event-subscribe-btn" 
+              onClick={() => subscribeToEvent(event._id, user)}
             >
               Inscrever-se
             </button>

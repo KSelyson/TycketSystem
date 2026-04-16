@@ -21,7 +21,7 @@ const EventSchema: Schema = new Schema({
     max_participants: {type: Number, required: true},
     createdAt: {type: Date, default: Date.now},
     category: {type: mongoose.Types.ObjectId, ref: "Category", required: true},
-    createdBy: {type: mongoose.Types.ObjectId, required: true}
+    createdBy: {type: mongoose.Types.ObjectId, ref: "User", required: true}
 });
 
 export const Event = model<IEvent>('Event', EventSchema);

@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import api from '../../services/api';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useAdmin } from '../../hooks/useAdmin';
 import { PlusCircle, LayoutGrid } from 'lucide-react';
-import axios from 'axios';
-// tinha variveis chamadas Trash2 e Calendar, não entendi o proposito nesse import no lucide-react
+import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const [categories, setCategories] = useState([]);
-  // const [events, setEvents] = useState([]); // Não é necessário manter os eventos no estado, pois eles não são exibidos ou editados diretamente aqui, pelo o menos por enquanto que eu estou refatorando
+  const { categories, createEvent, createCategory } = useAdmin();
 
-  // Estados para formulário de Evento
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
@@ -18,74 +15,36 @@ const AdminDashboard = () => {
   const [maxParticipants, setMaxParticipants] = useState(0);
   const [categoryId, setCategoryId] = useState('');
 
-  // Estados para formulário de Categoria
   const [catName, setCatName] = useState('');
   const [catDesc, setCatDesc] = useState('');
 
-  const reloadData =  async () => {
-    try {
-      const [catsRes] = await Promise.all([
-        api.get('/categories'),
-        api.get('/events')
-      ]);
-      setCategories(catsRes.data);
-      // setEvents(eventsRes.data); // Não é necessário manter os eventos no estado, pois eles não são exibidos ou editados diretamente aqui NO MOMENTO
-    } catch (err) {
-      console.error('Erro ao buscar dados', err);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-      const [catsRes] = await Promise.all([
-        api.get('/categories'),
-        api.get('/events')
-      ]);
-      setCategories(catsRes.data);
-      // setEvents(eventsRes.data); // Não é necessário manter os eventos no estado, pois eles não são exibidos ou editados diretamente aqui NO MOMENTO
-    } catch (err) {
-      console.error('Erro ao buscar dados', err);
-    }
-  };
-
-    fetchData();
-  }, []);
-
-  const handleCreateEvent = async (e: React.FormEvent) => {
+  const handleEventSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await api.post('/events', {
-        title,
-        description,
-        date,
-        location,
-        max_participants: maxParticipants,
-        category_id: categoryId
-      });
-      alert('Evento criado com sucesso!');
-      reloadData();
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.error || 'Erro ao criar evento');
-      } else {
-        alert('Erro inesperado');
-      }
+    const success = await createEvent({
+      title,
+      description,
+      date,
+      location,
+      max_participants: maxParticipants,
+      category_id: categoryId
+    });
+    
+    if (success) {
+      setTitle('');
+      setDescription('');
+      setDate('');
+      setLocation('');
+      setMaxParticipants(0);
+      setCategoryId('');
     }
   };
 
-  const handleCreateCategory = async (e: React.FormEvent) => {
+  const handleCategorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await api.post('/categories', { name: catName, description: catDesc });
-      alert('Categoria criada!');
-      reloadData();
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.error || 'Erro ao criar categoria');
-      } else {
-        alert('Erro inesperado');
-      }
+    const success = await createCategory({ name: catName, description: catDesc });
+    if (success) {
+      setCatName('');
+      setCatDesc('');
     }
   };
 
@@ -100,10 +59,10 @@ const AdminDashboard = () => {
       <div className="grid">
         {/* Formulário de Categoria */}
         <div className="card">
-          <h2 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h2 className="admin-section-title">
             <LayoutGrid size={20} /> Nova Categoria
           </h2>
-          <form onSubmit={handleCreateCategory}>
+          <form onSubmit={handleCategorySubmit}>
             <div className="form-group">
               <label>Nome</label>
               <input value={catName} onChange={e => setCatName(e.target.value)} required />
@@ -117,11 +76,11 @@ const AdminDashboard = () => {
         </div>
 
         {/* Formulário de Evento */}
-        <div className="card" style={{ gridColumn: 'span 2' }}>
-          <h2 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div className="card admin-card-wide">
+          <h2 className="admin-section-title">
             <PlusCircle size={20} /> Novo Evento
           </h2>
-          <form onSubmit={handleCreateEvent} className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <form onSubmit={handleEventSubmit} className="grid admin-form-grid">
             <div className="form-group">
               <label>Título</label>
               <input value={title} onChange={e => setTitle(e.target.value)} required />
@@ -130,7 +89,7 @@ const AdminDashboard = () => {
               <label>Data</label>
               <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
             </div>
-            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+            <div className="form-group form-group-full">
               <label>Descrição</label>
               <input value={description} onChange={e => setDescription(e.target.value)} required />
             </div>
@@ -142,21 +101,21 @@ const AdminDashboard = () => {
               <label>Vagas</label>
               <input type="number" value={maxParticipants} onChange={e => setMaxParticipants(Number(e.target.value))} required />
             </div>
-            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+            <div className="form-group form-group-full">
               <label>Categoria</label>
               <select 
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border)' }}
+                className="admin-select"
                 value={categoryId} 
                 onChange={e => setCategoryId(e.target.value)}
                 required
               >
                 <option value="">Selecione uma categoria</option>
-                {categories.map((c: { _id: string; name: string }) => (
+                {categories.map((c) => (
                   <option key={c._id} value={c._id}>{c.name}</option>
                 ))}
               </select>
             </div>
-            <button className="btn btn-primary" style={{ gridColumn: 'span 2' }}>Publicar Evento</button>
+            <button className="btn btn-primary admin-btn-full">Publicar Evento</button>
           </form>
         </div>
       </div>

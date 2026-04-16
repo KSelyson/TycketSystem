@@ -1,0 +1,38 @@
+.admin-section-title {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-card-wide {
+  grid-column: span 2;
+}
+
+.admin-form-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group-full {
+  grid-column: span 2;
+}
+
+.admin-select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--white);
+}
+
+.admin-btn-full {
+  grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+  .admin-card-wide, .admin-form-grid, .form-group-full, .admin-btn-full {
+    grid-column: span 1;
+    grid-template-columns: 1fr;
+  }
+}

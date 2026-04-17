@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import { Calendar, MapPin, Users } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './Home.css';
 import axios from 'axios';
 
 interface Event {
@@ -32,19 +35,20 @@ const Home = () => {
   }, []);
 
   const handleSubscribe = async (eventId: string) => {
+
     if (!user) {
-      alert('Faça login para se inscrever!');
+      toast.warning('Faça login para se inscrever!', {closeButton: true});
       return;
     }
 
     try {
       await api.post('/inscriptions', { event_id: eventId });
-      alert('Inscrição realizada com sucesso!');
+      toast.success('Inscrição realizada com sucesso!', {closeButton: true });
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.error || 'Erro ao se inscrever');
+        toast.error(err.response?.data?.error || 'Erro ao se inscrever', {closeButton: true});
       } else {
-        alert('Erro inesperado');
+        toast.error('Erro inesperado', {closeButton: true});
       }
     }
   };
@@ -95,6 +99,11 @@ const Home = () => {
           </div>
         ))}
       </div>
+    <div className='container-notification' style={{ width: '50%', maxWidth: '600px', margin: '2rem auto', textAlign: 'center' }}>
+    
+
+    <ToastContainer position='bottom-right' autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+    </div>
     </div>
   );
 };

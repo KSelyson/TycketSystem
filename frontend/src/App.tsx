@@ -30,20 +30,10 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route 
               path="/my-inscriptions" 
-              element={
-                <PrivateRoute>
-                  <MyInscriptions />
-                </PrivateRoute>
-              } 
-            />
+              element={<PrivateRoute> <MyInscriptions/> </PrivateRoute>} />
             <Route 
               path="/admin" 
-              element={
-                <PrivateRoute adminOnly>
-                  <AdminDashboard />
-                </PrivateRoute>
-              } 
-            />
+              element={<PrivateRoute adminOnly> <AdminDashboard/> </PrivateRoute>} />
           </Routes>
         </main>
       </Router>

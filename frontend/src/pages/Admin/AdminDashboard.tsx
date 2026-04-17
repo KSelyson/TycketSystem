@@ -18,6 +18,14 @@ const AdminDashboard = () => {
   const [maxParticipants, setMaxParticipants] = useState(0);
   const [categoryId, setCategoryId] = useState('');
 
+  //feedbacks para os formulários
+  const [loadingCategory, setLoadingCategory] = useState(false);
+  const [loadingEvent, setLoadingEvent] = useState(false);
+  const [errorCategory, setErrorCategory] = useState('');
+  const [errorEvent, setErrorEvent] = useState('');
+  const [successCategory, setSuccessCategory] = useState('');
+  const [successEvent, setSuccessEvent] = useState('');
+
   // Estados para formulário de Categoria
   const [catName, setCatName] = useState('');
   const [catDesc, setCatDesc] = useState('');
@@ -54,6 +62,11 @@ const AdminDashboard = () => {
 
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setLoadingEvent(true);
+    setErrorEvent('');
+    setSuccessEvent('');
+
     try {
       await api.post('/events', {
         title,
@@ -63,29 +76,39 @@ const AdminDashboard = () => {
         max_participants: maxParticipants,
         category_id: categoryId
       });
-      alert('Evento criado com sucesso!');
+
+      setSuccessEvent('Evento criado com sucesso!');
       reloadData();
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.error || 'Erro ao criar evento');
+        setErrorEvent(err.response?.data?.error || 'Erro ao criar evento');
       } else {
-        alert('Erro inesperado');
+        setErrorEvent('Erro inesperado');
       }
+    } finally {
+      setLoadingEvent(false);
     }
   };
 
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setLoadingCategory(true);
+    setErrorCategory('');
+    setSuccessCategory('');
+
     try {
       await api.post('/categories', { name: catName, description: catDesc });
-      alert('Categoria criada!');
+      setSuccessCategory('Categoria criada com sucesso!');
       reloadData();
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        alert(err.response?.data?.error || 'Erro ao criar categoria');
+        setErrorCategory(err.response?.data?.error || 'Erro ao criar categoria');
       } else {
-        alert('Erro inesperado');
+        setErrorCategory('Erro inesperado');
       }
+    } finally {
+      setLoadingCategory(false);
     }
   };
 
@@ -103,16 +126,22 @@ const AdminDashboard = () => {
           <h2 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <LayoutGrid size={20} /> Nova Categoria
           </h2>
+          { errorCategory && <p style={{ color: 'var(--danger)', marginBottom: '1rem' }}>{errorCategory}</p> }
+          { successCategory && <p style={{ color: 'var(--success)', marginBottom: '1rem' }}>{successCategory}</p> }
+
+
           <form onSubmit={handleCreateCategory}>
             <div className="form-group">
               <label>Nome</label>
-              <input value={catName} onChange={e => setCatName(e.target.value)} required />
+              <input value={catName} onChange={e => setCatName(e.target.value)}  />
             </div>
             <div className="form-group">
               <label>Descrição</label>
-              <input value={catDesc} onChange={e => setCatDesc(e.target.value)} required />
+              <input value={catDesc} onChange={e => setCatDesc(e.target.value)}  />
             </div>
-            <button className="btn btn-primary" style={{ width: '100%' }}>Criar Categoria</button>
+            <button className="btn btn-primary" disabled={loadingCategory} style={{ width: '100%' }}>
+              {loadingCategory ? 'Criando...' : 'Criar Categoria'}
+            </button>
           </form>
         </div>
 
@@ -121,26 +150,29 @@ const AdminDashboard = () => {
           <h2 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <PlusCircle size={20} /> Novo Evento
           </h2>
+          { errorEvent && <p style={{ color: 'var(--danger)', marginBottom: '1rem' }}>{errorEvent}</p> }
+          { successEvent && <p style={{ color: 'var(--success)', marginBottom: '1rem' }}>{successEvent}</p> }
+
           <form onSubmit={handleCreateEvent} className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="form-group">
               <label>Título</label>
-              <input value={title} onChange={e => setTitle(e.target.value)} required />
+              <input value={title} onChange={e => setTitle(e.target.value)}  />
             </div>
             <div className="form-group">
               <label>Data</label>
-              <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
+              <input type="date" value={date} onChange={e => setDate(e.target.value)}  />
             </div>
             <div className="form-group" style={{ gridColumn: 'span 2' }}>
               <label>Descrição</label>
-              <input value={description} onChange={e => setDescription(e.target.value)} required />
+              <input value={description} onChange={e => setDescription(e.target.value)}  />
             </div>
             <div className="form-group">
               <label>Local</label>
-              <input value={location} onChange={e => setLocation(e.target.value)} required />
+              <input value={location} onChange={e => setLocation(e.target.value)}  />
             </div>
             <div className="form-group">
               <label>Vagas</label>
-              <input type="number" value={maxParticipants} onChange={e => setMaxParticipants(Number(e.target.value))} required />
+              <input type="number" value={maxParticipants} onChange={e => setMaxParticipants(Number(e.target.value))}  />
             </div>
             <div className="form-group" style={{ gridColumn: 'span 2' }}>
               <label>Categoria</label>
@@ -148,7 +180,7 @@ const AdminDashboard = () => {
                 style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border)' }}
                 value={categoryId} 
                 onChange={e => setCategoryId(e.target.value)}
-                required
+                
               >
                 <option value="">Selecione uma categoria</option>
                 {categories.map((c: { _id: string; name: string }) => (
@@ -156,7 +188,9 @@ const AdminDashboard = () => {
                 ))}
               </select>
             </div>
-            <button className="btn btn-primary" style={{ gridColumn: 'span 2' }}>Publicar Evento</button>
+            <button className="btn btn-primary" disabled={loadingEvent} style={{ gridColumn: 'span 2' }}>
+              {loadingEvent ? 'Publicando...' : 'Publicar Evento'}
+            </button>
           </form>
         </div>
       </div>

@@ -1,0 +1,11 @@
+.Toastify__progress-bar--success {
+  background: blue;
+}
+
+.Toastify__progress-bar--error {
+  background: red;
+}
+
+.Toastify__progress-bar--warning {
+  background: orange;
+}

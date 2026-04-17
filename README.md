@@ -47,11 +47,11 @@ O sistema utiliza **JWT (JSON Web Token)** para controle de acesso, incluindo:
 
 ## 📦 Estrutura do projeto
 ```bash
-TycketSystem/                                  <br>
-│                                              <br>
-├── backend/ # API (Node + Express)            <br>
-├── frontend/ # Interface (React + TypeScript) <br>
-└── README.md                                  <br>
+TycketSystem/                                  
+│                                              
+├── backend/ # API (Node + Express)            
+├── frontend/ # Interface (React + TypeScript) 
+└── README.md                                  
 ```
 ---
 
